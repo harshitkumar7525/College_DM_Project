@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
+import os
 
 # Set seed for reproducibility
 np.random.seed(42)
@@ -60,7 +61,13 @@ for student_id in range(1, NUM_STUDENTS + 1):
 
 # Create DataFrame and save
 df = pd.DataFrame(data)
-df.to_csv("student_learning_behavior.csv", index=False)
+
+# ── Output Folder ─────────────────────────────────────────────────────────────
+OUTPUT_DIR = "outputs/data"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+df.to_csv(os.path.join(OUTPUT_DIR, "student_learning_behavior.csv"), index=False)
 
 print(f"Dataset generated successfully with {len(df)} records!")
+print(f"Saved to: {OUTPUT_DIR}/student_learning_behavior.csv")
 print(df.head())

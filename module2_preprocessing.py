@@ -22,6 +22,7 @@ Install: pip install pandas numpy scikit-learn imbalanced-learn matplotlib seabo
 ==============================================================================
 """
 
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,6 +31,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
 import warnings
+
+# ── Output Folders ────────────────────────────────────────────────────────────
+DATA_DIR = "outputs/data"
+PLOTS_DIR = "outputs/plots/module2_preprocessing"
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(PLOTS_DIR, exist_ok=True)
 warnings.filterwarnings('ignore')
 
 # ── Configure Plots ──────────────────────────────────────────────────────────
@@ -44,7 +51,7 @@ print("STEP 1: Loading Data & Initial Inspection")
 print("=" * 70)
 
 try:
-    df = pd.read_csv("student_learning_behavior.csv")
+    df = pd.read_csv(os.path.join(DATA_DIR, "student_learning_behavior.csv"))
     print(f"Dataset Loaded Successfully.")
     print(f"Shape: {df.shape[0]} rows, {df.shape[1]} columns")
     print(f"\nFirst 3 rows:\n{df.head(3)}")
@@ -199,13 +206,13 @@ test_set = pd.DataFrame(X_test, columns=X_test.columns)
 test_set['completion_status'] = y_test.values
 
 # Save to CSV
-train_resampled.to_csv("preprocessed_train.csv", index=False)
-test_set.to_csv("preprocessed_test.csv", index=False)
-df.to_csv("preprocessed_full.csv", index=False) # For clustering in Module 5
+train_resampled.to_csv(os.path.join(DATA_DIR, "preprocessed_train.csv"), index=False)
+test_set.to_csv(os.path.join(DATA_DIR, "preprocessed_test.csv"), index=False)
+df.to_csv(os.path.join(DATA_DIR, "preprocessed_full.csv"), index=False) # For clustering in Module 5
 
-print("  Saved: preprocessed_train.csv  (SMOTE-balanced training set)")
-print("  Saved: preprocessed_test.csv   (untouched test set for evaluation)")
-print("  Saved: preprocessed_full.csv   (full dataset for clustering/pattern mining)")
+print(f"  Saved: {DATA_DIR}/preprocessed_train.csv  (SMOTE-balanced training set)")
+print(f"  Saved: {DATA_DIR}/preprocessed_test.csv   (untouched test set for evaluation)")
+print(f"  Saved: {DATA_DIR}/preprocessed_full.csv   (full dataset for clustering/pattern mining)")
 
 # --- Generating Visualizations ---
 # 1. Feature Correlation Heatmap (Behavioral Metrics + Target)
@@ -214,9 +221,9 @@ corr_cols = numeric_cols + ['completion_status']
 sns.heatmap(df[corr_cols].corr(), annot=True, fmt='.2f', cmap='coolwarm', center=0, ax=ax)
 ax.set_title('Correlation Matrix: Student Behavior vs Completion', fontsize=14, fontweight='bold')
 plt.tight_layout()
-plt.savefig("correlation_heatmap.png", dpi=150)
+plt.savefig(os.path.join(PLOTS_DIR, "correlation_heatmap.png"), dpi=150)
 plt.close()
-print("  Saved: correlation_heatmap.png")
+print(f"  Saved: {PLOTS_DIR}/correlation_heatmap.png")
 
 print("\n" + "=" * 70)
 print("MODULE 2 COMPLETE [OK]")

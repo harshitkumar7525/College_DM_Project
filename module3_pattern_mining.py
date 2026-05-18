@@ -24,12 +24,19 @@ Dependencies: pandas, numpy, mlxtend, time, tracemalloc
 ==============================================================================
 """
 
+import os
 import pandas as pd
 import numpy as np
 import time
 import tracemalloc
 from mlxtend.frequent_patterns import apriori, fpgrowth, association_rules
 import warnings
+
+# ── Output Folders ────────────────────────────────────────────────────────────
+DATA_DIR = "outputs/data"
+RESULTS_DIR = "outputs/results/module3_pattern_mining"
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(RESULTS_DIR, exist_ok=True)
 warnings.filterwarnings('ignore')
 
 # ==============================================================================
@@ -40,7 +47,7 @@ print("STEP 1: Loading Raw Data for Discretization")
 print("=" * 70)
 
 try:
-    df = pd.read_csv("student_learning_behavior.csv")
+    df = pd.read_csv(os.path.join(DATA_DIR, "student_learning_behavior.csv"))
     print(f"  Loaded {len(df):,} student enrollment records.") # Matches Phase 1 total [cite: 16]
     print(f"  Target distribution (Completion Rate): {df['completion_status'].mean()*100:.2f}%")
 except FileNotFoundError:
@@ -223,7 +230,7 @@ rules_export = rules.copy()
 rules_export['antecedents'] = rules_export['antecedents'].apply(lambda x: ', '.join(list(x)))
 rules_export['consequents'] = rules_export['consequents'].apply(lambda x: ', '.join(list(x)))
 
-rules_export.to_csv("academic_association_rules.csv", index=False)
-print("  Successfully exported: academic_association_rules.csv")
+rules_export.to_csv(os.path.join(RESULTS_DIR, "academic_association_rules.csv"), index=False)
+print(f"  Successfully exported: {RESULTS_DIR}/academic_association_rules.csv")
 print("\nMODULE 3 EXPORT PROCESSING COMPLETE [OK]")
 print("=" * 70)

@@ -29,6 +29,7 @@ Dependencies: pandas, numpy, scikit-learn, matplotlib, seaborn, scipy
 ==============================================================================
 """
 
+import os
 import pandas as pd
 import numpy as np
 import time
@@ -41,6 +42,13 @@ from sklearn.metrics import silhouette_score, adjusted_rand_score
 from scipy.cluster.hierarchy import dendrogram, linkage
 import warnings
 warnings.filterwarnings('ignore')
+
+# ── Output Folders ────────────────────────────────────────────────────────────
+DATA_DIR = "outputs/data"
+PLOTS_DIR = "outputs/plots/module5_clustering"
+RESULTS_DIR = "outputs/results/module5_clustering"
+os.makedirs(PLOTS_DIR, exist_ok=True)
+os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # ── Configure Plots ──────────────────────────────────────────────────────────
 plt.style.use('seaborn-v0_8-darkgrid')
@@ -56,7 +64,7 @@ print("=" * 70)
 # ==============================================================================
 print("\n[STEP 1] Loading Preprocessed Operational Space...")
 try:
-    df = pd.read_csv("preprocessed_full.csv")
+    df = pd.read_csv(os.path.join(DATA_DIR, "preprocessed_full.csv"))
     print(f"  Full Matrix Workspace Dimension: {df.shape[0]} rows, {df.shape[1]} features")
 except FileNotFoundError:
     print("[ERROR] preprocessed_full.csv missing. Please run module2_preprocessing.py first.")
@@ -127,7 +135,7 @@ axes_eval[1].plot(k_space, silhouettes, 'ro-', linewidth=2)
 axes_eval[1].set_title('Silhouette Cohort Separability Profile', fontweight='bold')
 axes_eval[1].set_xlabel('Centroid Count (k)')
 fig_eval.tight_layout()
-fig_eval.savefig('clustering_optimization_curves.png', dpi=150)
+fig_eval.savefig(os.path.join(PLOTS_DIR, 'clustering_optimization_curves.png'), dpi=150)
 plt.close()
 
 # Run optimal deployment at k=3 based on behavior structures
@@ -150,7 +158,7 @@ fig_dendro, ax_dendro = plt.subplots(figsize=(12, 5))
 dendrogram(Z_matrix, truncate_mode='lastp', p=20, ax=ax_dendro, leaf_rotation=90)
 ax_dendro.set_title('Agglomerative Hierarchical Topology (Ward Variance Linkage)', fontsize=12, fontweight='bold')
 fig_dendro.tight_layout()
-fig_dendro.savefig('clustering_dendrogram_tree.png', dpi=150)
+fig_dendro.savefig(os.path.join(PLOTS_DIR, 'clustering_dendrogram_tree.png'), dpi=150)
 plt.close()
 
 # Fit target structure
@@ -222,7 +230,7 @@ for col_idx, (lbls, title) in enumerate(zip(labels_group, engine_names)):
 
 fig_maps.suptitle('Operational Cluster Matrix Topographies (PCA vs t-SNE Projections)', fontsize=15, fontweight='bold', y=0.98)
 fig_maps.tight_layout()
-fig_maps.savefig('clustering_master_topographies.png', dpi=150)
+fig_maps.savefig(os.path.join(PLOTS_DIR, 'clustering_master_topographies.png'), dpi=150)
 plt.close()
 
 print("  Saved Master Structural Maps: clustering_master_topographies.png")
@@ -242,5 +250,5 @@ summary_metrics = {
 }
 
 summary_df = pd.DataFrame(summary_metrics)
-summary_df.to_csv("clustering_metrics_summary.csv", index=False)
+summary_df.to_csv(os.path.join(RESULTS_DIR, "clustering_metrics_summary.csv"), index=False)
 print("\n[MODULE 5 STATUS] Clustering Engine Execution Pipeline Successfully Concluded [OK]\n")

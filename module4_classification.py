@@ -24,6 +24,7 @@ Dependencies: pandas, numpy, scikit-learn, matplotlib, seaborn
 ==============================================================================
 """
 
+import os
 import pandas as pd
 import numpy as np
 import time
@@ -39,6 +40,13 @@ from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_s
 import warnings
 warnings.filterwarnings('ignore')
 
+# ── Output Folders ────────────────────────────────────────────────────────────
+DATA_DIR = "outputs/data"
+PLOTS_DIR = "outputs/plots/module4_classification"
+RESULTS_DIR = "outputs/results/module4_classification"
+os.makedirs(PLOTS_DIR, exist_ok=True)
+os.makedirs(RESULTS_DIR, exist_ok=True)
+
 # ── Configure Plots ──────────────────────────────────────────────────────────
 plt.style.use('seaborn-v0_8-darkgrid')
 sns.set_palette("plasma")
@@ -53,8 +61,8 @@ print("=" * 70)
 # ==============================================================================
 print("\n[STEP 1] Loading Preprocessed Training and Test Partitions...")
 try:
-    df_train = pd.read_csv("preprocessed_train.csv")
-    df_test = pd.read_csv("preprocessed_test.csv")
+    df_train = pd.read_csv(os.path.join(DATA_DIR, "preprocessed_train.csv"))
+    df_test = pd.read_csv(os.path.join(DATA_DIR, "preprocessed_test.csv"))
     print(f"  Training Vector Configuration (SMOTE Balanced) : {df_train.shape}")
     print(f"  Test Vector Configuration (Original Imbalance)  : {df_test.shape}")
 except FileNotFoundError:
@@ -167,7 +175,7 @@ ax_roc.set_ylabel('True Positive Rate (TPR)', fontsize=11)
 ax_roc.set_title('Receiver Operating Characteristic (ROC) Benchmark', fontsize=12, fontweight='bold')
 ax_roc.legend(loc='lower right')
 fig_roc.tight_layout()
-fig_roc.savefig('classification_roc_curves.png', dpi=150)
+fig_roc.savefig(os.path.join(PLOTS_DIR, 'classification_roc_curves.png'), dpi=150)
 plt.close(fig_roc)
 
 # Save PR Trajectory
@@ -177,13 +185,13 @@ ax_pr.set_ylabel('Precision', fontsize=11)
 ax_pr.set_title('Precision-Recall Curve (PR-AUC) Space', fontsize=12, fontweight='bold')
 ax_pr.legend(loc='lower left')
 fig_pr.tight_layout()
-fig_pr.savefig('classification_pr_curves.png', dpi=150)
+fig_pr.savefig(os.path.join(PLOTS_DIR, 'classification_pr_curves.png'), dpi=150)
 plt.close(fig_pr)
 
 # Save Matrices Group
 fig_cm.suptitle('Confusion Matrix Evaluations (Imbalanced Test Set Target Boundary)', fontsize=13, fontweight='bold', y=1.02)
 fig_cm.tight_layout()
-fig_cm.savefig('classification_confusion_matrices.png', dpi=150, bbox_inches='tight')
+fig_cm.savefig(os.path.join(PLOTS_DIR, 'classification_confusion_matrices.png'), dpi=150, bbox_inches='tight')
 plt.close(fig_cm)
 
 print("  Saved Visualizations: classification_roc_curves.png, classification_pr_curves.png, classification_confusion_matrices.png")
@@ -210,7 +218,7 @@ sns.barplot(x=feature_imp_df.head(8).values, y=feature_imp_df.head(8).index, ax=
 ax_fi.set_title('Top 8 Feature Importances (Gini Entropy Degradation Score)', fontsize=12, fontweight='bold')
 ax_fi.set_xlabel('Gini Relative Importance Scale')
 fig_fi.tight_layout()
-fig_fi.savefig('classification_feature_importance.png', dpi=150)
+fig_fi.savefig(os.path.join(PLOTS_DIR, 'classification_feature_importance.png'), dpi=150)
 plt.close(fig_fi)
 print("  Saved Feature Importance Chart: classification_feature_importance.png")
 
@@ -245,7 +253,7 @@ ax_k.set_ylabel('Operational Score Metrics')
 ax_k.set_title('k-NN Parametric Sensitivity Profile Matrix', fontsize=12, fontweight='bold')
 ax_k.set_xticks(k_search_space)
 fig_k.tight_layout()
-fig_k.savefig('classification_knn_sensitivity.png', dpi=150)
+fig_k.savefig(os.path.join(PLOTS_DIR, 'classification_knn_sensitivity.png'), dpi=150)
 plt.close(fig_k)
 print("  Saved Hyperparameter Sweep Curve: classification_knn_sensitivity.png")
 
@@ -264,5 +272,5 @@ print("-" * 50)
 print(final_report_df[['Train Time (s)', 'Inference Time (s)']].to_string())
 
 # Save metrics record to disk storage
-final_report_df.to_csv("classification_metrics_summary.csv")
+final_report_df.to_csv(os.path.join(RESULTS_DIR, "classification_metrics_summary.csv"))
 print("\n  CSV Metric Logs Saved Successfully: classification_metrics_summary.csv\n")
